@@ -1,6 +1,7 @@
 from typing import List, Dict, Any, Tuple
 from core.types import DjangoModelType
 from rest_framework import serializers
+from random import choice
 
 def model_update(
     *,
@@ -34,3 +35,10 @@ def inline_serializer(*, fields, data=None, **kwargs):
         return serializer_class(data=data, **kwargs)
     
     return serializer_class(**kwargs)
+
+def generate_random_code(length=6):
+    seeds = 'e546d3bb410e44e68f2a2806ea3f2e97f31a8df0a2b942d99f76b1693075bcba'
+    code_list = [choice(seeds) for i in range(length)]
+    code = "".join(code_list)
+    
+    return code
