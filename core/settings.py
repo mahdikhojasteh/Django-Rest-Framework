@@ -39,10 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'django_filters',
     "corsheaders",
     'phonenumber_field',
     'users',
-    'auths'
+    'auths',
+    'properties'
 ]
 
 MIDDLEWARE = [
@@ -132,6 +134,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
+MEDIA_URL = 'media/'
+
+MEDIA_ROOT = Path(BASE_DIR, 'files', 'media').resolve()
+STATIC_ROOT = Path(BASE_DIR, 'files', 'static').resolve()
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
@@ -142,7 +148,7 @@ AUTH_USER_MODEL = 'users.User'
 
 REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'core.exceptions.hacksoft_proposed_exception_handler',
-    'DEFAULT_AUTHENTICATION_CLASSES': ['rest_framework_jwt.authentication.JSONWebTokenAuthentication',]
+    'DEFAULT_AUTHENTICATION_CLASSES': ['rest_framework_jwt.authentication.JSONWebTokenAuthentication', ]
 }
 
 CORS_ALLOW_CREDENTIALS = True

@@ -3,6 +3,7 @@ from typing import Dict
 from core.utils import generate_random_code
 from django.core.exceptions import ValidationError
 
+
 def send_OTP(*, user: User):
     # keywork-only arguments
     # OTP -> One Time Password
@@ -12,8 +13,9 @@ def send_OTP(*, user: User):
     user.verify_code = verify_code
     user.full_clean()
     user.save(update_fields=['verify_code'])
-    
+
     return user
+
 
 def verify_OTP(*, user: User, code: str):
     if user.verify_code == code:
@@ -22,24 +24,25 @@ def verify_OTP(*, user: User, code: str):
         user.save(update_fields=['mobile_verified'])
     else:
         raise ValidationError(message='verification code does not match')
-    
+
     return user
 
 
-def create_user(*, username: str, mobile: str, password: str):
-    
+def create_user(*, username: str, mobile: str, password: str) -> User:
+
     user = User(
-        username = username,
-        mobile = mobile,
+        username=username,
+        mobile=mobile,
     )
-    
-    user.set_password(password)    
+
+    user.set_password(password)
     user.full_clean()
     user.save()
 
     return user
 
-def create_superuser(*, username: str, mobile: str, password: str):
+
+def create_superuser(*, username: str, mobile: str, password: str) -> User:
     user = create_user(
         mobile=mobile,
         username=username,
@@ -48,10 +51,11 @@ def create_superuser(*, username: str, mobile: str, password: str):
     user.is_admin = True
     user.full_clean()
     user.save()
-    
+
     return user
 
-def update_user(*, user:User, data:Dict) -> User:
+
+def update_user(*, user: User, data: Dict) -> User:
     non_side_effect_fields = [
         'email',
         'username',
@@ -60,9 +64,9 @@ def update_user(*, user:User, data:Dict) -> User:
         'bio',
         'birthdate'
     ]
-    
+
     has_updated = False
-    
+
     for field in non_side_effect_fields:
         if field not in data:
             continue
@@ -73,7 +77,7 @@ def update_user(*, user:User, data:Dict) -> User:
         if getattr(user, field) != data[field]:
             has_updated = True
             setattr(user, field, data[field])
-    
+
     if has_updated:
         fields = non_side_effect_fields.copy()
         if 'password' in data and data['password']:
@@ -81,7 +85,7 @@ def update_user(*, user:User, data:Dict) -> User:
             fields.append('password')
         user.full_clean()
         user.save(update_fields=fields)
-    
+
     # Side-effect fields update here (e.g. username is generated based on first & last name)
     # ... some additional tasks with the user ...
 
