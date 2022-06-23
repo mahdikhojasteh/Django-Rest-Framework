@@ -11,11 +11,15 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 import datetime
+import environ
+
+env = environ.Env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+APP_DOMAIN = env("APP_DOMAIN", default="http://localhost:8000")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
@@ -44,6 +48,7 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'users',
     'auths',
+    'files',
     'properties'
 ]
 
@@ -99,6 +104,9 @@ DATABASES = {
     }
 }
 
+# celery
+CELERY_BROKER_URL = 'redis://localhost:6379'
+
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
 
@@ -134,10 +142,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
-MEDIA_URL = 'media/'
 
-MEDIA_ROOT = Path(BASE_DIR, 'files', 'media').resolve()
-STATIC_ROOT = Path(BASE_DIR, 'files', 'static').resolve()
+FILE_MAX_SIZE = env.int("FILE_MAX_SIZE", default=10485760)  # 10 MiB
+
+MEDIA_ROOT_NAME = "media"
+MEDIA_ROOT = os.path.join(BASE_DIR, MEDIA_ROOT_NAME)
+MEDIA_URL = f"/{MEDIA_ROOT_NAME}/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field

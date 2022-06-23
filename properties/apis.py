@@ -1,4 +1,3 @@
-from email.policy import default
 from rest_framework.response import Response
 from rest_framework import serializers, status
 from rest_framework.views import APIView
@@ -81,8 +80,22 @@ class PropertyCreateAPI(APIView):
         serializer.is_valid(raise_exception=True)
 
         property = property_services.property_create(
-            **serializer.validated_data)
+            **serializer.validated_data,
+        )
         return Response(data=self.InputSerializer(property).data, status=status.HTTP_201_CREATED)
+
+
+class PropertyImageCreateAPI(APIView):
+
+    def post(self, request, id):
+        property = get_object_or_404(Property, pk=id)
+        file_objs = request.FILES.getlist('file')
+
+        property = property_services.property_image_create(
+            property=property,
+            file_objs=file_objs
+        )
+        return Response(status=status.HTTP_201_CREATED)
 
 
 class PropertyUpdateAPI(APIView):
@@ -102,10 +115,6 @@ class PropertyUpdateAPI(APIView):
 
 
 class PropertyDeleteAPI(APIView):
-    class InputSerializer(serializers.ModelSerializer):
-        class Meta:
-            model = Property
-            fields = '__all__'
 
     def delete(self, request, id):
         property = get_object_or_404(Property, pk=id)

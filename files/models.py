@@ -1,26 +1,48 @@
 from django.db import models
+from django.conf import settings
+
 from core.models import BaseModel
 
+from users.models import User
 
-class Image(models.Model):
-    extension = models.CharField(max_length=5)
-    original_name = models.CharField(max_length=50)
-    generated_name = models.CharField(max_length=50)
-
-
-class Entity(models.Model):
-    class entityEnum(models.IntegerChoices):
-        unkown = 0
-        comment = 1
-        property = 2
-
-    entity_id = models.PositiveIntegerField()
-    entity_type = models.IntegerField(
-        choices=entityEnum.choices, default=entityEnum.unkown)
-    files = models.ManyToManyField(Image, through='FileEntity')
+from files.utils import (
+    file_generate_upload_path
+)
 
 
-class FileEntity(BaseModel):
-    files = models.ForeignKey(Image, on_delete=models.RESTRICT)
-    entities = models.ForeignKey(Entity, on_delete=models.RESTRICT)
+class File(BaseModel):
+    file = models.FileField(
+        upload_to=file_generate_upload_path,
+        blank=True,
+        null=True
+    )
+
+    original_file_name = models.TextField()
+
+    file_name = models.CharField(max_length=255, unique=True)
+    file_type = models.CharField(max_length=255)
+
+    # As a specific behavior,
+    # We might want to preserve files after the uploader has been deleted.
+    # In case you want to delete the files too, use models.CASCADE & drop the null=True
+    uploaded_by = models.ForeignKey(
+        User,
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL
+    )
+
+    upload_finished_at = models.DateTimeField(blank=True, null=True)
+
     is_deleted = models.BooleanField(default=False)
+
+    @property
+    def is_valid(self):
+        """
+        We consider a file "valid" if the the datetime flag has value.
+        """
+        return bool(self.upload_finished_at)
+
+    @property
+    def url(self):
+        return f"{settings.APP_DOMAIN}{self.file.url}"

@@ -1,2 +1,6 @@
 env\scripts\activate # windows
 source env/bin/activate # linux, mac
+
+
+# activate celery
+celery -A core.celery worker --loglevel=info

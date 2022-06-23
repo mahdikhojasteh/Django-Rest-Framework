@@ -6,6 +6,7 @@ urlpatterns = [
     path('fp', apis.PropertyPFListAPI.as_view()),
     path('<int:id>', apis.PropertyFetchAPI.as_view()),
     path('create', apis.PropertyCreateAPI.as_view()),
+    path('upload/<int:id>', apis.PropertyImageCreateAPI.as_view()),
     path('update/<int:id>', apis.PropertyUpdateAPI.as_view()),
     path('delete/<int:id>', apis.PropertyDeleteAPI.as_view())
 ]
