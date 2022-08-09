@@ -17,3 +17,6 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 
 # Load task modules from all registered Django app configs.
 app.autodiscover_tasks()
+
+# Activate celery
+# celery -A core.celery worker --loglevel=info

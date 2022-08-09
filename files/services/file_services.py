@@ -34,7 +34,7 @@ def file_delete_recycle(*, instance: File) -> File:
     old_name = instance.file.name
     # 'files/5b3b31a64c764fac86a22cb080ed596b.jpg'
 
-    file_name = old_name.split(os.path.sep)[1:][0]
+    file_name = old_name.split(os.path.sep)[-1]
     # '5b3b31a64c764fac86a22cb080ed596b.jpg'
 
     new_name = os.path.join(label, file_name)

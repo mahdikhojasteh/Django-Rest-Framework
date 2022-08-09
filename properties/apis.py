@@ -23,9 +23,8 @@ class PropertyListAPI(APIView):
         properties = property_selectors.property_list()
         return Response(data=self.InputSerializer(properties, many=True).data, status=status.HTTP_200_OK)
 
+
 # Pagination Filter List API
-
-
 class PropertyPFListAPI(APIView):
     class Pagination(LimitOffsetPagination):
         default_limit = 1
